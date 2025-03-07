@@ -33,7 +33,7 @@ func ValidatePassword(password string) models.ValidateOutput {
 }
 
 func ValidatePhone(phone string) models.ValidateOutput {
-	response.Message = "Invalid Phone Number Format (10 or +&12 digits)"
+	response.Message = "Invalid Contact No."
 	if phone[0] == '+' {
 		phone = phone[1:]
 		response.Result = regexp.MustCompile(`^[0-9]{12}$`).MatchString(phone)
@@ -65,4 +65,3 @@ func ValidateName(name string) models.ValidateOutput {
 	}
 	return response
 }
-

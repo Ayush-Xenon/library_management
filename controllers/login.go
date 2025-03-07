@@ -22,16 +22,11 @@ func Login(c *gin.Context) {
 	var authInput models.AuthInput
 
 	if err := c.ShouldBindJSON(&authInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "msg": "All fields required"})
 		return
 	}
 	var res models.ValidateOutput
 	res = validators.ValidateEmail(authInput.Email)
-	if !res.Result {
-		c.JSON(http.StatusBadRequest, gin.H{"error": res.Message})
-		return
-	}
-	res = validators.ValidatePassword(authInput.Password)
 	if !res.Result {
 		c.JSON(http.StatusBadRequest, gin.H{"error": res.Message})
 		return
@@ -42,6 +37,11 @@ func Login(c *gin.Context) {
 
 	if userFound.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
+	}
+	res = validators.ValidatePassword(authInput.Password)
+	if !res.Result {
+		c.JSON(http.StatusBadRequest, gin.H{"error": res.Message})
 		return
 	}
 
