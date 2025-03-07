@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	//"regexp"
 
@@ -35,6 +36,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": res.Message})
 		return
 	}
+	authInput.Email = strings.ToLower(authInput.Email)
 	var userFound models.User
 	initializers.DB.Where("email=?", authInput.Email).Find(&userFound)
 

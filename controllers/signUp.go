@@ -3,21 +3,22 @@ package controllers
 import (
 	//"fmt"
 	"net/http"
-//	"os"
+	//	"os"
 
 	//"regexp"
 
 	"library_management/initializers"
 	"library_management/models"
 	"library_management/validators"
+
 	//"time"
+	"strings"
 
 	"github.com/gin-gonic/gin"
-//	"github.com/golang-jwt/jwt/v4"
+
+	//	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
-
-
 
 func SignUp(c *gin.Context) {
 
@@ -48,7 +49,9 @@ func SignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": response.Message})
 		return
 	}
-	
+	authInput.Email = strings.ToLower(authInput.Email)
+	authInput.Name = strings.ToUpper(authInput.Name)
+
 	var userFound models.User
 	initializers.DB.Where("name=?", authInput.Name).Find(&userFound)
 
@@ -64,11 +67,11 @@ func SignUp(c *gin.Context) {
 	}
 
 	user := models.User{
-		Name: authInput.Name,
-		Password: string(passwordHash),
-		Email: authInput.Email,
+		Name:          authInput.Name,
+		Password:      string(passwordHash),
+		Email:         authInput.Email,
 		ContactNumber: authInput.ContactNumber,
-		Role: "user",
+		Role:          "user",
 	}
 
 	initializers.DB.Create(&user)

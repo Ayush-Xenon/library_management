@@ -5,6 +5,7 @@ import (
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
+	"strings"
 
 	//"os/user"
 
@@ -18,7 +19,7 @@ func CreateLibrary(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	library.Name = strings.ToUpper(library.Name)
 	var libraryModel models.Library
 	initializers.DB.Where("name = ?", library.Name).First(&libraryModel)
 	if libraryModel.ID != 0 {

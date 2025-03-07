@@ -27,13 +27,17 @@ func main() {
 	auth := r.Group("/auth")
 	auth.Use(middlewares.CheckAuth())
 	{
-		auth.POST("/library/create", controllers.CreateLibrary)
+		auth.POST("/library/create", middlewares.CheckRole("user"), controllers.CreateLibrary)
 		//auth.GET("/library", controllers.GetLibrary)
-		auth.PATCH("/library/assign_admin",middlewares.CheckRole("owner"),controllers.AssignAdmin)
-	//r.POST("/library", middlewares.CheckAuth(), controllers.CreateLibrary)
-	// r.GET("/library", controllers.GetLibrary)
-	// r.POST("/book", controllers.CreateBook)
-	// r.GET("/book", controllers.GetBook)
+		auth.PATCH("/library/assign_admin", middlewares.CheckRole("owner"), controllers.AssignAdmin)
+		//r.POST("/library", middlewares.CheckRole("user"), controllers.CreateLibrary)
+		auth.POST("/library/enroll", middlewares.CheckRole2(), controllers.Enroll)
+		//auth.POST("/library/enroll", middlewares.CheckRole("reader"), controllers.Enroll)
+		// r.GET("/library", controllers.GetLibrary)
+		auth.POST("/book/create", middlewares.CheckRole("admin"), controllers.CreateBook)
+		// r.GET("/book", controllers.GetBook)
+		auth.PATCH("/book/update", middlewares.CheckRole("admin"), controllers.UpdateBook)
+		auth.POST("book/raise",middlewares.CheckRole("reader"),controllers.RaiseRequest)
 	}
 	r.Run(":8081")
 }

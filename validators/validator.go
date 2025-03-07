@@ -1,11 +1,13 @@
 package validators
 
 import (
+	"library_management/models"
 	"regexp"
 	"strings"
-	"library_management/models"
 )
+
 var response models.ValidateOutput
+
 func ValidateEmail(email string) models.ValidateOutput {
 	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 	re := regexp.MustCompile(emailRegex)
@@ -21,7 +23,7 @@ func ValidatePassword(password string) models.ValidateOutput {
 	var hasLower = regexp.MustCompile(`[a-z]`)
 	var hasSpecial = regexp.MustCompile(`[!@#~$%^&*()_+|<>,.?/:;{}]`)
 
-	response.Result=hasMinLen.MatchString(password) &&
+	response.Result = hasMinLen.MatchString(password) &&
 		hasNumber.MatchString(password) &&
 		hasUpper.MatchString(password) &&
 		hasLower.MatchString(password) &&
@@ -32,34 +34,35 @@ func ValidatePassword(password string) models.ValidateOutput {
 
 func ValidatePhone(phone string) models.ValidateOutput {
 	response.Message = "Invalid Phone Number Format (10 or +&12 digits)"
-		if phone[0] == '+' {
-			phone = phone[1:]
-			response.Result=regexp.MustCompile(`^[0-9]{12}$`).MatchString(phone)
-			return response
-		}
-	response.Result=regexp.MustCompile(`^[0-9]{10}$`).MatchString(phone)
+	if phone[0] == '+' {
+		phone = phone[1:]
+		response.Result = regexp.MustCompile(`^[0-9]{12}$`).MatchString(phone)
+		return response
+	}
+	response.Result = regexp.MustCompile(`^[0-9]{10}$`).MatchString(phone)
 	return response
 }
 
 func ValidateISBN(isbn string) models.ValidateOutput {
-	response.Message = "Invalid ISBN Format (10 or 13 digits)"
+	response.Message = "Invalid ISBN Format (10 or 13 numeric digits)"
 	var ten_dig = regexp.MustCompile(`^[0-9]{10}$`).MatchString(isbn)
 	var thirteen_dig = regexp.MustCompile(`^[0-9]{13}$`).MatchString(isbn)
-	response.Result=ten_dig || thirteen_dig
+	response.Result = ten_dig || thirteen_dig
 	return response
 }
 func ValidateName(name string) models.ValidateOutput {
 	response.Message = "Invalid Name Format (3-50 characters, starts and ends with a letter and contains only letters and spaces and first word should be at least 3 characters)"
 	if len(name) < 3 || len(name) > 50 {
-		response.Result= false
+		response.Result = false
 		return response
 	}
-	response.Result  = regexp.MustCompile(`^[a-zA-Z][a-zA-Z\s]*[a-zA-Z]$`).MatchString(name)
+	response.Result = regexp.MustCompile(`^[a-zA-Z][a-zA-Z\s]*[a-zA-Z]$`).MatchString(name)
 
 	words := strings.Fields(name)
 	if len(words) < 1 || len(words[0]) < 3 {
-		response.Result= false
+		response.Result = false
 		return response
 	}
 	return response
 }
+

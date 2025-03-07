@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -27,8 +29,8 @@ type LibraryInput struct {
 }
 
 type UserLibraries struct {
-	UserID    uint 
-	LibraryID uint 
+	UserID    uint
+	LibraryID uint
 }
 
 type AuthInput struct {
@@ -56,19 +58,26 @@ type Book struct {
 
 type BookInput struct {
 	ISBN            string `binding:"required"`
-
-
+	Title           string `binding:"required"`
+	Authors         string `binding:"required"`
+	Publisher       string `binding:"required"`
+	Version         string `binding:"required"`
+	TotalCopies     int    `binding:"required"`
+	AvailableCopies int    `binding:"required"`
 }
 
 type RequestEvent struct {
-	ReqID        uint `gorm:"primary_key"`
-	BookID       string
-	ReaderID     uint
-	RequestDate  string
-	ApprovalDate string
-	ApproverID   uint
-	RequestType  string
-	LibID        uint
+	gorm.Model
+	BookID      string
+	ReaderID    uint
+	ApproverID  uint
+	RequestType string
+	LibID       uint
+}
+
+type RequestInput struct {
+	BookID string `binding:"required"`
+	LibID  uint   `binding:"required"`
 }
 
 type IssueRegistry struct {
@@ -81,6 +90,16 @@ type IssueRegistry struct {
 	ExpectedReturnDate string
 	ReturnDate         string
 	ReturnApproverID   uint
+	LibId			   uint
+}
+type IssueRegInput struct{
+	IssueID            uint `gorm:"primary_key"`
+	ISBN               string
+	ReaderID           uint
+	IssueApproverID    uint
+	IssueStatus        string
+	IssueDate          string
+	ExpectedReturnDate string
 }
 
 type UserClaims struct {
