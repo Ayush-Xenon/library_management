@@ -81,16 +81,15 @@ type RequestInput struct {
 }
 
 type IssueRegistry struct {
-	IssueID            uint `gorm:"primary_key"`
+	gorm.Model
 	ISBN               string
 	ReaderID           uint
 	IssueApproverID    uint
 	IssueStatus        string
-	IssueDate          string
-	ExpectedReturnDate string
-	ReturnDate         string
+	ExpectedReturnDate time.Time
 	ReturnApproverID   uint
 	LibId			   uint
+	ReturnDate         time.Time
 }
 type IssueRegInput struct{
 	IssueID            uint `gorm:"primary_key"`
