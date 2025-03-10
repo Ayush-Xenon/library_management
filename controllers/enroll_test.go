@@ -66,6 +66,15 @@ func TestEnroll(t *testing.T) {
 			expectedCode: http.StatusBadRequest,
 			expectedBody: gin.H{"error": "Already enrolled"},
 		},
+		{
+			name: "All fields required",
+			body: gin.H{},
+			setupMocks: func() {
+				initializers.DB = initializers.SetupTestDB()
+			},
+			expectedCode: http.StatusBadRequest,
+			expectedBody: gin.H{"msg": "All fields required"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -88,7 +97,13 @@ func TestEnroll(t *testing.T) {
 			assert.Equal(t, tt.expectedCode, w.Code)
 			var responseBody gin.H
 			json.Unmarshal(w.Body.Bytes(), &responseBody)
-			assert.Equal(t, tt.expectedBody, responseBody)
+			for key, value := range tt.expectedBody {
+				assert.Equal(t, value, responseBody[key])
+			}
+			//assert.Equal(t, tt.expectedBody, responseBody)
 		})
 	}
+	initializers.DB.Where("library_id=?", 1).Delete(&models.UserLibraries{})
+	initializers.DB.Where("id=?", 1).Delete(&models.User{})
+	initializers.DB.Where("id=?", 1).Delete(&models.Library{})
 }

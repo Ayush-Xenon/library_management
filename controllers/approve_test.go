@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDecline(t *testing.T) {
+func TestApprove(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	initializers.DB = initializers.SetupTestDB()
 	defer initializers.CloseTestDB(initializers.DB)
@@ -47,19 +47,19 @@ func TestDecline(t *testing.T) {
 
 	var reqsId1 = reqs1.ID
 
-	// testReq2 := models.RequestEvent{
-	// 	BookID:      "1234567892",
-	// 	ReaderID:    1,
-	// 	RequestType: "required",
-	// 	LibID:       1,
-	// }
-	// initializers.DB.Create(&testReq2)
-	// var reqs2 models.RequestEvent
-	// initializers.DB.Model(&models.RequestEvent{}).
-	// 	Where("id=?", testReq2.ID).
-	// 	First(&reqs2)
+	testReq2 := models.RequestEvent{
+		BookID:      "1234567892",
+		ReaderID:    1,
+		RequestType: "required",
+		LibID:       1,
+	}
+	initializers.DB.Create(&testReq2)
+	var reqs2 models.RequestEvent
+	initializers.DB.Model(&models.RequestEvent{}).
+		Where("id=?", testReq2.ID).
+		First(&reqs2)
 
-	// var reqsId2 = reqs2.ID
+	var reqsId2 = reqs2.ID
 
 	tests := []struct {
 		name         string
@@ -74,27 +74,31 @@ func TestDecline(t *testing.T) {
 			body:         reqId{},
 			setupMocks:   func() {},
 			expectedCode: http.StatusBadRequest,
-			expectedBody: gin.H{"error": "json: cannot unmarshal string into Go struct field struct { ID uint } of type uint"},
+			expectedBody: gin.H{"error": "json: cannot unmarshal string into Go struct field struct { ID uint \"binding:\\\"required\\\"\" } of type uint"},
 		},
 		{
-			name: "Request not found",
+			name: "Request ID not found",
 			body: reqId{
 				ID: 1,
 			},
-			setupMocks:   func() {},
+			setupMocks: func() {},
+			currentUser: models.User{
+				ID: 2,
+			},
 			expectedCode: http.StatusBadRequest,
-			expectedBody: gin.H{"error": "Request not found"},
+			expectedBody: gin.H{"error": "Request ID not found"},
 		},
 		{
-			name: "Request already approved or declined",
+			name: "Already approved or declined",
 			body: reqId{
 				ID: reqsId1,
 			},
-			setupMocks: func() {
-				//initializers.DB.Create(&models.RequestEvent{ID: 1, RequestType: "approved"})
+			setupMocks: func() {},
+			currentUser: models.User{
+				ID: 2,
 			},
 			expectedCode: http.StatusBadRequest,
-			expectedBody: gin.H{"error": "request already approved or declined"},
+			expectedBody: gin.H{"error": "Already approved or declined"},
 		},
 		{
 			name: "User not found",
@@ -108,19 +112,61 @@ func TestDecline(t *testing.T) {
 			expectedBody: gin.H{"error": "User not found"},
 		},
 		{
-			name: "Successful decline",
+			name: "Book not found in library",
 			body: reqId{
 				ID: reqsId,
 			},
 			setupMocks: func() {
-				//initializers.DB.Create(&models.RequestEvent{ID: 1, RequestType: "required"})
+				//initializers.DB.Create(&models.RequestEvent{ID: 1, RequestType: "required", BookID: "1234567890", LibID: 1})
+			},
+			currentUser: models.User{
+				ID:   2,
+				Role: "admin",
+			},
+			expectedCode: http.StatusBadRequest,
+			expectedBody: gin.H{"error": "Book not found in library"},
+		},
+		{
+			name: "Currently not available",
+			body: reqId{
+				ID: reqsId,
+			},
+			setupMocks: func() {
+				//initializers.DB.Create(&models.RequestEvent{ID: 1, RequestType: "required", BookID: "1234567890", LibID: 1})
+				initializers.DB.Create(&models.Book{ISBN: "1234567890", LibID: 1, AvailableCopies: 0})
+			},
+			currentUser: models.User{
+				ID:   2,
+				Role: "admin",
+			},
+			expectedCode: http.StatusBadRequest,
+			expectedBody: gin.H{"error": "Currently not available"},
+		},
+		{
+			name: "Successful approval",
+			body: reqId{
+				ID: reqsId2,
+			},
+			setupMocks: func() {
+				//initializers.DB.Create(&models.RequestEvent{ID: 1, RequestType: "required", BookID: "1234567890", LibID: 1, ReaderID: 2})
+				initializers.DB.Create(&models.Book{ISBN: "1234567892", LibID: 1, AvailableCopies: 5})
 			},
 			currentUser: models.User{
 				ID:   2,
 				Role: "admin",
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: gin.H{"msg": "Request declined"},
+			expectedBody: gin.H{
+				"msg": "successful",
+				// models.IssueRegistry{
+				// 	ISBN:               "1234567890",
+				// 	ReaderID:           2,
+				// 	IssueApproverID:    1,
+				// 	IssueStatus:        "lent",
+				// 	ExpectedReturnDate: time.Now().AddDate(0, 0, 7),
+				// 	LibId:              1,
+				// },s
+			},
 		},
 	}
 
@@ -128,7 +174,6 @@ func TestDecline(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			tt.setupMocks()
-
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 
@@ -137,10 +182,10 @@ func TestDecline(t *testing.T) {
 			}
 
 			bodyBytes, _ := json.Marshal(tt.body)
-			c.Request, _ = http.NewRequest(http.MethodPost, "/decline", bytes.NewBuffer(bodyBytes))
+			c.Request, _ = http.NewRequest(http.MethodPost, "/approve", bytes.NewBuffer(bodyBytes))
 			c.Request.Header.Set("Content-Type", "application/json")
 
-			Decline(c)
+			Approve(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)
 			// var responseBody gin.H
@@ -154,4 +199,5 @@ func TestDecline(t *testing.T) {
 	initializers.DB.Exec("DELETE FROM users")
 	initializers.DB.Exec("DELETE FROM libraries")
 	initializers.DB.Exec("DELETE FROM issue_registries")
+
 }

@@ -18,6 +18,7 @@ import (
 func TestLogin(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	initializers.DB = initializers.SetupTestDB()
+	defer initializers.CloseTestDB(initializers.DB)
 	// Mock data
 	passwordHash, _ := bcrypt.GenerateFromPassword([]byte("@Password123"), bcrypt.DefaultCost)
 	user := models.User{
@@ -121,5 +122,6 @@ func TestLogin(t *testing.T) {
 		})
 	}
 
-	initializers.DB.Delete(&user)
+	initializers.DB.Where("email=?", "test000@example.com").Delete(&models.User{})
+	//initializers.DB.Where("email=?", 1).Delete(&models.User{})
 }

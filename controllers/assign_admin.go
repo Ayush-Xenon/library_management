@@ -11,7 +11,7 @@ import (
 
 func AssignAdmin(c *gin.Context) {
 	var assign_admin struct {
-		ID uint
+		ID uint `binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&assign_admin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

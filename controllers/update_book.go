@@ -11,8 +11,8 @@ import (
 
 func UpdateBook(c *gin.Context) {
 	var update_book struct {
-		ISBN   string
-		Copies int
+		ISBN   string `binding:"required"`
+		Copies int    `binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&update_book); err != nil {
@@ -48,11 +48,11 @@ func UpdateBook(c *gin.Context) {
 	book.AvailableCopies = book.AvailableCopies + update_book.Copies
 	book.TotalCopies = book.TotalCopies + update_book.Copies
 	if update_book.Copies < 0 && book.TotalCopies < 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "copies to be decreased is less than total copies"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "copies to be decreased must be less than total copies"})
 		return
 	}
-	if update_book.Copies < 0 && book.AvailableCopies <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Ccopies to be decreased is less than available copies"})
+	if update_book.Copies < 0 && book.AvailableCopies < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ccopies to be decreased must be less than available copies"})
 		return
 	}
 	if book.TotalCopies == 0 {

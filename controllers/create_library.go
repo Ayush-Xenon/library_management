@@ -27,18 +27,17 @@ func CreateLibrary(c *gin.Context) {
 		return
 	}
 
-	libraryModel.Name = library.Name
-	initializers.DB.Create(&models.Library{Name: library.Name})
-
-	var temp models.Library
-	initializers.DB.Where("name = ?", library.Name).First(&temp)
-
 	user, exists := c.Get("currentUser")
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 	userData := user.(models.User)
+	libraryModel.Name = library.Name
+	initializers.DB.Create(&models.Library{Name: library.Name})
+
+	var temp models.Library
+	initializers.DB.Where("name = ?", library.Name).First(&temp)
 
 	initializers.DB.Create(&models.UserLibraries{UserID: userData.ID, LibraryID: temp.ID})
 

@@ -32,6 +32,16 @@ func RaiseRequest(c *gin.Context) {
 	}
 	userData := user.(models.User)
 
+	var lib models.Library
+	initializers.DB.Model(&models.Library{}).
+		Where("id=?", req.LibID).
+		First(&lib)
+
+	if lib.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Library not found"})
+		return
+	}
+
 	var usrLib models.UserLibraries
 	initializers.DB.Model(&models.UserLibraries{}).
 		Where("user_id=?", userData.ID).
@@ -40,15 +50,6 @@ func RaiseRequest(c *gin.Context) {
 
 	if usrLib.LibraryID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not enrolled in library"})
-		return
-	}
-	var lib models.Library
-	initializers.DB.Model(&models.Library{}).
-		Where("id=?", req.LibID).
-		First(&lib)
-
-	if lib.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Library not found"})
 		return
 	}
 
@@ -60,6 +61,17 @@ func RaiseRequest(c *gin.Context) {
 
 	if book.LibID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not found in library"})
+		return
+	}
+
+	var chk models.RequestEvent
+	initializers.DB.Model(&models.RequestEvent{}).
+		Where("book_id=?", req.BookID).
+		Where("lib_id=?", req.LibID).
+		Where("request_type=?", "required").
+		Find(&chk)
+	if chk.LibID != 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Book is already requested"})
 		return
 	}
 

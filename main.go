@@ -23,6 +23,11 @@ func main() {
 	r := gin.Default()
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.Login)
+	r.GET("/books", controllers.GetBooks)
+	r.GET("/libraries", controllers.GetLib)
+	r.GET("/books/title", controllers.GetBooksByTitle)
+	r.GET("/books/author", controllers.GetBooksByAuthor)
+	r.GET("/books/publisher", controllers.GetBooksByPublisher)
 
 	auth := r.Group("/auth")
 	auth.Use(middlewares.CheckAuth())

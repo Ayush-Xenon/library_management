@@ -15,7 +15,7 @@ import (
 
 func Approve(c *gin.Context) {
 	var reqId struct {
-		ID uint
+		ID uint `binding:"required"`
 	}
 	if err := c.BindJSON(&reqId); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -54,10 +54,12 @@ func Approve(c *gin.Context) {
 	}
 
 	if book.AvailableCopies <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Currently not available"})
+		//c.JSON(http.StatusBadRequest, gin.H{"error": "Currently not available"})
 		//dfkljhgvrfvkrfvkrfjkgvrfnjhkgvnjhfrkvnjh
-		Decline(c)
-		//rfvjkrnvkrjnvkjnfrkjvgnjkfr
+		initializers.DB.Model(&models.RequestEvent{}).
+			Where("id=?", reqId.ID).
+			Update("request_type", "declined")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not avilable request declined"})
 		return
 	}
 	book.AvailableCopies = book.AvailableCopies - 1
@@ -72,7 +74,6 @@ func Approve(c *gin.Context) {
 		Update("approver_id", userData.ID)
 
 	var t = time.Now().AddDate(0, 0, 7)
-
 
 	var issue = models.IssueRegistry{
 		ISBN:               reqReg.BookID,

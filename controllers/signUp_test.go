@@ -22,7 +22,7 @@ func TestSignUp(t *testing.T) {
 
 	// Mock the database
 	initializers.DB = initializers.SetupTestDB()
-
+	defer initializers.CloseTestDB(initializers.DB)
 	// Create a test user
 	passwordHash, _ := bcrypt.GenerateFromPassword([]byte("@Password123"), bcrypt.DefaultCost)
 	testUser := models.User{
@@ -149,4 +149,8 @@ func TestSignUp(t *testing.T) {
 		})
 
 	}
+	// Clean up the database
+	// initializers.DB.Exec("DELETE FROM users")
+	initializers.DB.Where("email=?", "test@example.com").Delete(&models.User{})
+	initializers.DB.Where("email=?", "john@example.com").Delete(&models.User{})
 }

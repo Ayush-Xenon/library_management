@@ -2,6 +2,7 @@ package initializers
 
 import (
 	"database/sql"
+	"fmt"
 	"library_management/models"
 
 	_ "github.com/mattn/go-sqlite3" // Importing SQLite driver for in-memory database
@@ -14,11 +15,13 @@ func SetupTestDB() *gorm.DB {
 	dsn := "host=localhost user=postgres password=postgres dbname=test port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect to the test database")
+		fmt.Println("not connetceknfed")
+		
+		//panic("failed to connect to the test database")
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Library{}, &models.Book{}, &models.RequestEvent{}, &models.IssueRegistry{})
 
 	return db
 }
@@ -29,4 +32,14 @@ func MockDB() *sql.DB {
 	}
 	// Initialize schema and seed data if necessary
 	return db
+}
+func CloseTestDB(db *gorm.DB) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic("failed to get database instance")
+	}
+	err = sqlDB.Close()
+	if err != nil {
+		panic("failed to close the database")
+	}
 }

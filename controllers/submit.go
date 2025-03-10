@@ -18,7 +18,7 @@ import (
 
 func Submit(c *gin.Context) {
 	var issueId struct {
-		ID uint
+		ID uint `binding:"required"`
 	}
 	if err := c.BindJSON(&issueId); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -36,7 +36,7 @@ func Submit(c *gin.Context) {
 		return
 	}
 
-	if issue.IssueStatus != "lent" {
+	if issue.ReturnApproverID != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book already returned"})
 		return
 	}
@@ -64,6 +64,15 @@ func Submit(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	user, exists := c.Get("currentUser")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	userData := user.(models.User)
+	initializers.DB.Model(&models.IssueRegistry{}).
+		Where("id=?", issueId.ID).
+		Update("return_approver_id", userData.ID)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Book returned successfully"})
 

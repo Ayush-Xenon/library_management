@@ -17,7 +17,7 @@ import (
 
 func Decline(c *gin.Context) {
 	var reqId struct {
-		ID uint
+		ID uint `binding:"required"`
 	}
 	if err := c.BindJSON(&reqId); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

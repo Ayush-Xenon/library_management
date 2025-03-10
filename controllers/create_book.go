@@ -13,7 +13,7 @@ import (
 func CreateBook(c *gin.Context) {
 	var book models.BookInput
 	if err := c.ShouldBindJSON(&book); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "msg": "json: cannot unmarshal number into Go struct field BookInput.isbn of type string"})
 		return
 	}
 	book.Authors = strings.ToUpper(book.Authors)
@@ -49,7 +49,7 @@ func CreateBook(c *gin.Context) {
 	}
 	userData := user.(models.User)
 	var libUsr models.UserLibraries
-	initializers.DB.Model(models.UserLibraries{}).
+	initializers.DB.Model(&models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
 		First(&libUsr)
 

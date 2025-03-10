@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
@@ -10,10 +11,10 @@ import (
 
 func Enroll(c *gin.Context) {
 	var enroll struct {
-		LibraryID uint
+		LibraryID uint `binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&enroll); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "All fields required", "error": err.Error()})
 		return
 	}
 	user, exists := c.Get("currentUser")
@@ -21,7 +22,9 @@ func Enroll(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
+
 	userData := user.(models.User)
+	fmt.Println(userData)
 	var userLibrary models.UserLibraries
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
