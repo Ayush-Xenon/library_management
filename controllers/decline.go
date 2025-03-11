@@ -15,6 +15,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Decline request
+// @Summary Decline Request
+// @Description Decline a request event
+// @Tags request
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  reqId body  models.RequestID true  "request ID"
+// @Success 200 {object} models.ErrorResponse "Request declined successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/request/decline [patch]
 func Decline(c *gin.Context) {
 	var reqId struct {
 		ID uint `binding:"required"`
@@ -28,7 +40,7 @@ func Decline(c *gin.Context) {
 	var req models.RequestEvent
 	initializers.DB.Model(&models.RequestEvent{}).
 		Where("id=?", reqId.ID).
-		First(&req)
+		Find(&req)
 
 	if req.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Request not found"})

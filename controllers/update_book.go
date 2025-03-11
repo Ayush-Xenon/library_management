@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UpdateBook godoc
+// @Summary Update Book
+// @Description Update the number of copies of a book in the library
+// @Tags book
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  updateBook body  models.UpdateBookRequest true  "update book data"
+// @Success 200 {object} models.ErrorResponse "Book updated successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/book/update [patch]
 func UpdateBook(c *gin.Context) {
 	var update_book struct {
 		ISBN   string `binding:"required"`
@@ -34,7 +46,7 @@ func UpdateBook(c *gin.Context) {
 	var libUsr models.UserLibraries
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
-		First(&libUsr)
+		Find(&libUsr)
 
 	var book models.Book
 	initializers.DB.Model(models.Book{}).

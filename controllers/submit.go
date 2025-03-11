@@ -16,6 +16,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Submit godoc
+// @Summary Submit Book
+// @Description Submit a borrowed book
+// @Tags book
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  submit body  models.RequestID true  "submit data"
+// @Success 200 {object} models.ErrorResponse "Book submitted successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/book/submit [post]
 func Submit(c *gin.Context) {
 	var issueId struct {
 		ID uint `binding:"required"`
@@ -29,7 +41,7 @@ func Submit(c *gin.Context) {
 	var issue models.IssueRegistry
 	initializers.DB.Model(&models.IssueRegistry{}).
 		Where("id=?", issueId.ID).
-		First(&issue)
+		Find(&issue)
 
 	if issue.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Issue id not found"})
@@ -45,7 +57,7 @@ func Submit(c *gin.Context) {
 	initializers.DB.Model(&models.Book{}).
 		Where("isbn=?", issue.ISBN).
 		Where("lib_id=?", issue.LibId).
-		First(&book)
+		Find(&book)
 
 	if book.LibID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not found"})

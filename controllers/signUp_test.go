@@ -49,7 +49,7 @@ func TestSignUp(t *testing.T) {
 				Email:         "john@example.com",
 				ContactNumber: "1234567890",
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: http.StatusCreated,
 			expectedBody: `"SignUp successful"`,
 		},
 		{
@@ -105,7 +105,7 @@ func TestSignUp(t *testing.T) {
 				ContactNumber: "1234567890",
 			},
 			expectedCode: http.StatusBadRequest,
-			expectedBody: `"Invalid Name Format (3-50 characters, starts and ends with a letter and contains only letters and spaces and first word should be at least 3 characters)"`,
+			expectedBody: `"Invalid Name Format (3-50 characters, starts and ends with a letter and contains only letters and spaces and Find word should be at least 3 characters)"`,
 		},
 		{
 			name: "Invalid Input",

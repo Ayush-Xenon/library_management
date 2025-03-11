@@ -12,6 +12,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateLibrary godoc
+// @Summary Create a new library
+// @Description Create a new library in the system
+// @Tags library
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  library body  models.LibraryInput true  "library data"
+// @Success 200 {object} models.ErrorResponse "Library created successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/library/create [post]
+
 func CreateLibrary(c *gin.Context) {
 	var library models.LibraryInput
 
@@ -21,7 +34,7 @@ func CreateLibrary(c *gin.Context) {
 	}
 	library.Name = strings.ToUpper(library.Name)
 	var libraryModel models.Library
-	initializers.DB.Where("name = ?", library.Name).First(&libraryModel)
+	initializers.DB.Where("name = ?", library.Name).Find(&libraryModel)
 	if libraryModel.ID != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Library already exists"})
 		return
@@ -37,7 +50,7 @@ func CreateLibrary(c *gin.Context) {
 	initializers.DB.Create(&models.Library{Name: library.Name})
 
 	var temp models.Library
-	initializers.DB.Where("name = ?", library.Name).First(&temp)
+	initializers.DB.Where("name = ?", library.Name).Find(&temp)
 
 	initializers.DB.Create(&models.UserLibraries{UserID: userData.ID, LibraryID: temp.ID})
 

@@ -91,6 +91,7 @@ func TestRaiseRequest(t *testing.T) {
 			},
 			setupMocks: func() {
 				initializers.DB.Create(&models.Library{ID: 1, Name: "TEST"})
+				initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
 			},
 			currentUser: models.User{
 				ID:   1,
@@ -106,8 +107,8 @@ func TestRaiseRequest(t *testing.T) {
 				LibID:  1,
 			},
 			setupMocks: func() {
-				initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
-				// initializers.DB.Create(&models.Library{ID: 1, Name: "Test Library"})
+				//initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
+				initializers.DB.Create(&models.Library{ID: 1, Name: "Test Library"})
 			},
 			currentUser: models.User{
 				ID:   1,
@@ -143,7 +144,7 @@ func TestRaiseRequest(t *testing.T) {
 			setupMocks: func() {
 				//initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
 				//initializers.DB.Create(&models.Library{ID: 1, Name: "T"})
-				initializers.DB.Create(&models.Book{ISBN: "1234567890", LibID: 1})
+				//initializers.DB.Create(&models.Book{ISBN: "1234567890", LibID: 1})
 			},
 			currentUser: models.User{
 				ID:   1,

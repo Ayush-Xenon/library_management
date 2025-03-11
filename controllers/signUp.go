@@ -1,3 +1,4 @@
+// filepath: /home/workshop1/go/src/Library_management/controllers/signUp.go
 package controllers
 
 import (
@@ -20,6 +21,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// SignUp godoc
+// @Summary User Signup
+// @Description Create a new user
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  authInput body  models.AuthCreate true  "user data"
+// @Success 201 {object} models.ErrorResponse "User created successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Router /signup [post]
 func SignUp(c *gin.Context) {
 
 	var authInput models.AuthCreate
@@ -76,6 +87,6 @@ func SignUp(c *gin.Context) {
 
 	initializers.DB.Create(&user)
 
-	c.JSON(http.StatusOK, gin.H{"data": user, "message": "SignUp successful"})
+	c.JSON(http.StatusCreated, gin.H{"data": authInput, "message": "SignUp successful"})
 
 }

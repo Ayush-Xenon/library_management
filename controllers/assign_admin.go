@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AssignAdmin godoc
+// @Summary Assign Admin
+// @Description Assign a user as an admin of a library
+// @Tags library
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  assignAdmin body  models.RequestID true  "assign admin data"
+// @Success 200 {object} models.ErrorResponse "Admin assigned successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/library/assign_admin [patch]
 func AssignAdmin(c *gin.Context) {
 	var assign_admin struct {
 		ID uint `binding:"required"`
@@ -40,7 +52,7 @@ func AssignAdmin(c *gin.Context) {
 	var libUsr models.UserLibraries
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
-		First(&libUsr)
+		Find(&libUsr)
 
 	result := initializers.DB.Model(&models.Library{}).
 		Select("libraries.id as lib_id").

@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Enroll godoc
+// @Summary Enroll User in Library
+// @Description Enroll a user in a library
+// @Tags library
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  enroll body  models.EnrollRequest true  "enrollment data"
+// @Success 200 {object} models.EnrollResponse "Enrollment successful"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Secrity BearerAuth
+// @Router /auth/library/enroll [post]
 func Enroll(c *gin.Context) {
 	var enroll struct {
 		LibraryID uint `binding:"required"`
@@ -29,7 +41,7 @@ func Enroll(c *gin.Context) {
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
 		Where("library_id = ?", enroll.LibraryID).
-		First(&userLibrary)
+		Find(&userLibrary)
 	if userLibrary.UserID != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Already enrolled"})
 		return
@@ -38,7 +50,7 @@ func Enroll(c *gin.Context) {
 	// initializers.DB.Model(models.User{}).
 	// 	Where("id = ?", userData.ID).
 	// 	Where("role = ?", "user").Or("role = ?", "reader").
-	// 	First(&chk)
+	// 	Find(&chk)
 	// if chk.ID == 0 {
 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot enroll , user is owner or admin"})
 	// 	return

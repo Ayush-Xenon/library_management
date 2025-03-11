@@ -13,6 +13,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Approve godoc
+// @Summary Approve Request
+// @Description Approve a request event
+// @Tags request
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  reqId body  models.RequestID true  "request ID"
+// @Success 200 {object} models.ApproveResponse "Request approved successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/request/approve [post]
 func Approve(c *gin.Context) {
 	var reqId struct {
 		ID uint `binding:"required"`
@@ -25,7 +37,7 @@ func Approve(c *gin.Context) {
 	var reqReg models.RequestEvent
 	initializers.DB.Model(&models.RequestEvent{}).
 		Where("id=?", reqId.ID).
-		First(&reqReg)
+		Find(&reqReg)
 	fmt.Println(reqReg)
 	if reqReg.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Request ID not found"})
@@ -46,7 +58,7 @@ func Approve(c *gin.Context) {
 	initializers.DB.Model(&models.Book{}).
 		Where("isbn=?", reqReg.BookID).
 		Where("lib_id=?", reqReg.LibID).
-		First(&book)
+		Find(&book)
 
 	if book.LibID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not found in library"})
@@ -84,6 +96,6 @@ func Approve(c *gin.Context) {
 		LibId:              reqReg.LibID,
 	}
 	initializers.DB.Create(&issue)
-	c.JSON(http.StatusOK, gin.H{"msg": issue})
+	c.JSON(http.StatusOK, gin.H{"msg": "Issued"})
 
 }

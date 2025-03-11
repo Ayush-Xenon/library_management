@@ -59,9 +59,9 @@ func TestEnroll(t *testing.T) {
 			},
 			setupMocks: func() {
 				initializers.DB = initializers.SetupTestDB()
-				initializers.DB.Create(&models.User{ID: 1, Role: "user"})
-				initializers.DB.Create(&models.Library{ID: 1})
-				initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
+				//initializers.DB.Create(&models.User{ID: 1, Role: "user"})
+				//initializers.DB.Create(&models.Library{ID: 1})
+				//initializers.DB.Create(&models.UserLibraries{UserID: 1, LibraryID: 1})
 			},
 			expectedCode: http.StatusBadRequest,
 			expectedBody: gin.H{"error": "Already enrolled"},
@@ -103,7 +103,10 @@ func TestEnroll(t *testing.T) {
 			//assert.Equal(t, tt.expectedBody, responseBody)
 		})
 	}
-	initializers.DB.Where("library_id=?", 1).Delete(&models.UserLibraries{})
-	initializers.DB.Where("id=?", 1).Delete(&models.User{})
-	initializers.DB.Where("id=?", 1).Delete(&models.Library{})
+	initializers.DB.Exec("DELETE FROM issue_registries")
+	initializers.DB.Exec("DELETE FROM request_events")
+	initializers.DB.Exec("DELETE FROM books")
+	initializers.DB.Exec("DELETE FROM user_libraries")
+	initializers.DB.Exec("DELETE FROM users")
+	initializers.DB.Exec("DELETE FROM libraries")
 }

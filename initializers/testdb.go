@@ -1,7 +1,6 @@
 package initializers
 
 import (
-	"database/sql"
 	"fmt"
 	"library_management/models"
 
@@ -16,7 +15,7 @@ func SetupTestDB() *gorm.DB {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("not connetceknfed")
-		
+
 		//panic("failed to connect to the test database")
 	}
 
@@ -25,14 +24,7 @@ func SetupTestDB() *gorm.DB {
 
 	return db
 }
-func MockDB() *sql.DB {
-	db, err := sql.Open("sqlite3", ":memory:")
-	if err != nil {
-		panic(err)
-	}
-	// Initialize schema and seed data if necessary
-	return db
-}
+
 func CloseTestDB(db *gorm.DB) {
 	sqlDB, err := db.DB()
 	if err != nil {

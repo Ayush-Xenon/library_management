@@ -77,7 +77,7 @@ func CheckRole(s string) gin.HandlerFunc {
 		user := c.MustGet("currentUser").(models.User)
 		if user.Role != s {
 			if user.Role == "user" {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , first enroll or create"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , Find enroll or create"})
 			}
 			if user.Role == "admin" {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , admin cannot be a reader or owner"})
@@ -101,7 +101,7 @@ func CheckRole2() gin.HandlerFunc {
 		user := c.MustGet("currentUser").(models.User)
 
 		// if user.Role == "user" {
-		// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , first enroll or create"})
+		// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , Find enroll or create"})
 		// }
 		if user.Role == "admin" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , admin cannot be a reader or owner"})

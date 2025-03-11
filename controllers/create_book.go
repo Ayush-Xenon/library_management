@@ -10,6 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateBook godoc
+// @Summary Create a new book
+// @Description Create a new book in the library
+// @Tags book
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  book body  models.BookInput true  "book data"
+// @Success 200 {object} models.ErrorResponse "Book created successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/book/create [post]
+
 func CreateBook(c *gin.Context) {
 	var book models.BookInput
 	if err := c.ShouldBindJSON(&book); err != nil {
@@ -28,7 +41,7 @@ func CreateBook(c *gin.Context) {
 	}
 
 	var bookModel models.Book
-	initializers.DB.Where("isbn = ?", book.ISBN).First(&bookModel)
+	initializers.DB.Where("isbn = ?", book.ISBN).Find(&bookModel)
 	if bookModel.ISBN != "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book already exists"})
 		return
@@ -51,7 +64,7 @@ func CreateBook(c *gin.Context) {
 	var libUsr models.UserLibraries
 	initializers.DB.Model(&models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
-		First(&libUsr)
+		Find(&libUsr)
 
 	var newBook = models.Book{
 		ISBN:            book.ISBN,

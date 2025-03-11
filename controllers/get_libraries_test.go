@@ -14,9 +14,9 @@ import (
 func setupTest(t *testing.T) (*gin.Context, *httptest.ResponseRecorder) {
 	gin.SetMode(gin.TestMode)
 	initializers.DB = initializers.SetupTestDB()
-	t.Cleanup(func() {
-		initializers.CloseTestDB(initializers.DB)
-	})
+	// t.Cleanup(func() {
+	// 	initializers.CloseTestDB(initializers.DB)
+	// })
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)

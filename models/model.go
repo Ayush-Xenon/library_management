@@ -88,10 +88,10 @@ type IssueRegistry struct {
 	IssueStatus        string
 	ExpectedReturnDate time.Time
 	ReturnApproverID   uint
-	LibId			   uint
+	LibId              uint
 	ReturnDate         time.Time
 }
-type IssueRegInput struct{
+type IssueRegInput struct {
 	IssueID            uint `gorm:"primary_key"`
 	ISBN               string
 	ReaderID           uint
@@ -109,3 +109,36 @@ type ValidateOutput struct {
 	Result  bool
 	Message string
 }
+
+type UserResponse struct {
+	Data    AuthCreate `json:"data"`
+	Message string     `json:"message"`
+}
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
+type EnrollRequest struct {
+	LibraryID uint `json:"library_id" binding:"required"`
+}
+
+type EnrollResponse struct {
+	Message string `json:"message"`
+}
+
+type EnrollErrorResponse struct {
+	Message string `json:"message"`
+	Error   string `json:"error,omitempty"`
+}
+
+type RequestID struct {
+	ID uint `json:"id" binding:"required"`
+}
+type ApproveResponse struct {
+	Message string `json:"message"`
+}
+type UpdateBookRequest struct {
+    ISBN   string `json:"isbn" binding:"required"`
+    Copies int    `json:"copies" binding:"required"`
+}
+

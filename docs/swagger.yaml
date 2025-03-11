@@ -1,0 +1,367 @@
+basePath: /
+definitions:
+  models.ApproveResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.AuthCreate:
+    properties:
+      contactNumber:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - contactNumber
+    - email
+    - name
+    - password
+    type: object
+  models.AuthInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.EnrollRequest:
+    properties:
+      library_id:
+        type: integer
+    required:
+    - library_id
+    type: object
+  models.EnrollResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.RequestID:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  models.RequestInput:
+    properties:
+      bookID:
+        type: string
+      libID:
+        type: integer
+    required:
+    - bookID
+    - libID
+    type: object
+  models.UpdateBookRequest:
+    properties:
+      copies:
+        type: integer
+      isbn:
+        type: string
+    required:
+    - copies
+    - isbn
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API for managing libraries and books, including user authentication
+    and authorization.
+  title: Library Management API
+  version: "1.0"
+paths:
+  /auth/book/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit a borrowed book
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: submit data
+        in: body
+        name: submit
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book submitted successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit Book
+      tags:
+      - book
+  /auth/book/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update the number of copies of a book in the library
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: update book data
+        in: body
+        name: updateBook
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book updated successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Book
+      tags:
+      - book
+  /auth/library/assign_admin:
+    patch:
+      consumes:
+      - application/json
+      description: Assign a user as an admin of a library
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: assign admin data
+        in: body
+        name: assignAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Admin assigned successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Assign Admin
+      tags:
+      - library
+  /auth/library/enroll:
+    post:
+      consumes:
+      - application/json
+      description: Enroll a user in a library
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: enrollment data
+        in: body
+        name: enroll
+        required: true
+        schema:
+          $ref: '#/definitions/models.EnrollRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Enrollment successful
+          schema:
+            $ref: '#/definitions/models.EnrollResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Enroll User in Library
+      tags:
+      - library
+  /auth/request/approve:
+    post:
+      consumes:
+      - application/json
+      description: Approve a request event
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request ID
+        in: body
+        name: reqId
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request approved successfully
+          schema:
+            $ref: '#/definitions/models.ApproveResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Approve Request
+      tags:
+      - request
+  /auth/request/decline:
+    patch:
+      consumes:
+      - application/json
+      description: Decline a request event
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request ID
+        in: body
+        name: reqId
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request declined successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Decline Request
+      tags:
+      - request
+  /auth/request/raise:
+    post:
+      consumes:
+      - application/json
+      description: Raise a request to issue a book
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Request raised successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Raise Issue Request
+      tags:
+      - request
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: login data
+        in: body
+        name: loginInput
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: User Login
+      tags:
+      - auth
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: user data
+        in: body
+        name: authInput
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: User Signup
+      tags:
+      - auth
+swagger: "2.0"

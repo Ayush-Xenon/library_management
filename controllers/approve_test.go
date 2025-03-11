@@ -28,7 +28,7 @@ func TestApprove(t *testing.T) {
 	var reqs models.RequestEvent
 	initializers.DB.Model(&models.RequestEvent{}).
 		Where("id=?", testReq.ID).
-		First(&reqs)
+		Find(&reqs)
 
 	var reqsId = reqs.ID
 
@@ -43,7 +43,7 @@ func TestApprove(t *testing.T) {
 	var reqs1 models.RequestEvent
 	initializers.DB.Model(&models.RequestEvent{}).
 		Where("id=?", testReq1.ID).
-		First(&reqs1)
+		Find(&reqs1)
 
 	var reqsId1 = reqs1.ID
 
@@ -57,7 +57,7 @@ func TestApprove(t *testing.T) {
 	var reqs2 models.RequestEvent
 	initializers.DB.Model(&models.RequestEvent{}).
 		Where("id=?", testReq2.ID).
-		First(&reqs2)
+		Find(&reqs2)
 
 	var reqsId2 = reqs2.ID
 

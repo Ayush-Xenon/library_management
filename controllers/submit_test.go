@@ -34,7 +34,7 @@ func TestSubmit(t *testing.T) {
 	var iss models.IssueRegistry
 	initializers.DB.Model(&models.IssueRegistry{}).
 		Where("isbn=?", testIssue.ISBN).
-		First(&iss)
+		Find(&iss)
 
 	var issId = iss.ID
 
@@ -51,7 +51,7 @@ func TestSubmit(t *testing.T) {
 	var iss1 models.IssueRegistry
 	initializers.DB.Model(&models.IssueRegistry{}).
 		Where("isbn=?", testIssue1.ISBN).
-		First(&iss1)
+		Find(&iss1)
 	var issId1 = iss1.ID
 
 	tests := []struct {
@@ -117,7 +117,7 @@ func TestSubmit(t *testing.T) {
 			},
 			setupMocks: func() {
 				//initializers.DB.Create(&models.IssueRegistry{ID: 1, ISBN: "1234567890", LibId: 1, IssueStatus: "lent"})
-				initializers.DB.Create(&models.Book{ISBN: "1234567890", LibID: 1, AvailableCopies: 5, TotalCopies: 10})
+				//initializers.DB.Create(&models.Book{ISBN: "1234567892", LibID: 1, AvailableCopies: 5, TotalCopies: 10})
 			},
 			currentUser: models.User{
 				ID: 2,

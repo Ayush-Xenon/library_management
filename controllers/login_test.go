@@ -122,6 +122,7 @@ func TestLogin(t *testing.T) {
 		})
 	}
 
+
 	initializers.DB.Where("email=?", "test000@example.com").Delete(&models.User{})
 	//initializers.DB.Where("email=?", 1).Delete(&models.User{})
 }

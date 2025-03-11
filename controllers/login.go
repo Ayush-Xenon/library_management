@@ -18,6 +18,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// @Summary User Login
+// @Description Login a user
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  loginInput body  models.AuthInput true  "login data"
+// @Success 200 {object} models.ErrorResponse "Login successful"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var authInput models.AuthInput
 

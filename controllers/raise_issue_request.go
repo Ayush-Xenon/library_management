@@ -11,6 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RaiseRequest godoc
+// @Summary Raise Issue Request
+// @Description Raise a request to issue a book
+// @Tags request
+// @Accept  json
+// @Produce  json
+// @Param  Authorization header string true "Bearer token"
+// @Param  request body  models.RequestInput true  "request data"
+// @Success 201 {object} models.ErrorResponse "Request raised successfully"
+// @Failure 400 {object} models.ErrorResponse "Bad request"
+// @Security BearerAuth
+// @Router /auth/request/raise [post]
 func RaiseRequest(c *gin.Context) {
 	var req models.RequestInput
 
@@ -35,7 +47,7 @@ func RaiseRequest(c *gin.Context) {
 	var lib models.Library
 	initializers.DB.Model(&models.Library{}).
 		Where("id=?", req.LibID).
-		First(&lib)
+		Find(&lib)
 
 	if lib.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Library not found"})
@@ -46,7 +58,7 @@ func RaiseRequest(c *gin.Context) {
 	initializers.DB.Model(&models.UserLibraries{}).
 		Where("user_id=?", userData.ID).
 		Where("library_id=?", req.LibID).
-		First(&usrLib)
+		Find(&usrLib)
 
 	if usrLib.LibraryID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not enrolled in library"})
@@ -57,7 +69,7 @@ func RaiseRequest(c *gin.Context) {
 	initializers.DB.Model(&models.Book{}).
 		Where("isbn=?", req.BookID).
 		Where("lib_id=?", req.LibID).
-		First(&book)
+		Find(&book)
 
 	if book.LibID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not found in library"})
@@ -69,6 +81,7 @@ func RaiseRequest(c *gin.Context) {
 		Where("book_id=?", req.BookID).
 		Where("lib_id=?", req.LibID).
 		Where("request_type=?", "required").
+		Where("reader_id=?", userData.ID).
 		Find(&chk)
 	if chk.LibID != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Book is already requested"})
