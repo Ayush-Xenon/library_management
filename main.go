@@ -45,14 +45,7 @@ func main() {
 	auth.Use(middlewares.CheckAuth())
 	{
 		auth.PATCH("/library/assign_admin", middlewares.CheckRole("owner"), controllers.AssignAdmin)
-
 		auth.POST("/library/create", middlewares.CheckRole("user"), controllers.CreateLibrary)
-		//auth.GET("/library", controllers.GetLibrary)
-
-		//r.POST("/library", middlewares.CheckRole("user"), controllers.CreateLibrary)
-
-		//auth.POST("/library/enroll", middlewares.CheckRole("reader"), controllers.Enroll)
-		
 		auth.POST("/book/create", middlewares.CheckRole("admin"), controllers.CreateBook)
 		auth.PATCH("/book/update", middlewares.CheckRole("admin"), controllers.UpdateBook)
 		auth.POST("request/approve", middlewares.CheckRole("admin"), controllers.Approve)
