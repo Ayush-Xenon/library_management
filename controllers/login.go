@@ -75,6 +75,7 @@ func Login(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"token": token,
+		"role":  userFound.Role,
 	})
 
 }

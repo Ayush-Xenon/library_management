@@ -84,8 +84,8 @@ func SignUp(c *gin.Context) {
 		ContactNumber: authInput.ContactNumber,
 		Role:          "user",
 	}
-
 	initializers.DB.Create(&user)
+	authInput.Password = string(passwordHash)
 
 	c.JSON(http.StatusCreated, gin.H{"data": authInput, "message": "SignUp successful"})
 

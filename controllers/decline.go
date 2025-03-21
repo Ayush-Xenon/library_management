@@ -63,6 +63,6 @@ func Decline(c *gin.Context) {
 		Update("request_type", "declined").
 		Update("approver_id", userData.ID)
 
-	c.JSON(http.StatusOK, gin.H{"msg": "Request declined"})
+	c.JSON(http.StatusOK, gin.H{"data": "Request declined"})
 
 }

@@ -96,6 +96,6 @@ func Approve(c *gin.Context) {
 		LibId:              reqReg.LibID,
 	}
 	initializers.DB.Create(&issue)
-	c.JSON(http.StatusOK, gin.H{"msg": "Issued"})
+	c.JSON(http.StatusOK, gin.H{"data": "Approved"})
 
 }

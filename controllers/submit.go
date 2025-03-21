@@ -64,15 +64,10 @@ func Submit(c *gin.Context) {
 		return
 	}
 
-	issue.IssueStatus = "returned"
-	issue.ReturnDate = time.Now()
-	if err := initializers.DB.Save(&issue).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	book.AvailableCopies += 1
-	if err := initializers.DB.Save(&book).Error; err != nil {
+	if err := initializers.DB.Model(&models.Book{}).
+		Where("isbn=?", issue.ISBN).
+		Where("lib_id=?", issue.LibId).
+		Update("available_copies", book.AvailableCopies+1).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -82,9 +77,19 @@ func Submit(c *gin.Context) {
 		return
 	}
 	userData := user.(models.User)
-	initializers.DB.Model(&models.IssueRegistry{}).
+	if err := initializers.DB.Model(&models.IssueRegistry{}).
 		Where("id=?", issueId.ID).
-		Update("return_approver_id", userData.ID)
+		Updates(map[string]interface{}{
+			"issue_status":       "returned",
+			"return_date":        time.Now(),
+			"return_approver_id": userData.ID,
+		}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	// initializers.DB.Model(&models.IssueRegistry{}).
+	// 	Where("id=?", issueId.ID).
+	// 	Update("return_approver_id", userData.ID)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Book returned successfully"})
 

@@ -6,6 +6,7 @@ import (
 	_ "library_management/docs" // This is required to load the documentation files
 	"library_management/initializers"
 	"library_management/middlewares"
+	"net/http"
 
 	//	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,14 +27,22 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	})
 
 	// Swagger endpoint
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-
 	r.POST("/signup", controllers.SignUp)
 
-	
 	r.POST("/login", controllers.Login)
 
 	r.GET("/books", controllers.GetBooks)
@@ -44,7 +53,9 @@ func main() {
 	auth := r.Group("/auth")
 	auth.Use(middlewares.CheckAuth())
 	{
+		auth.GET("/profile", controllers.GetProfile)
 		auth.PATCH("/library/assign_admin", middlewares.CheckRole("owner"), controllers.AssignAdmin)
+		auth.GET("/user", middlewares.CheckRole("owner"), controllers.GetUsers)
 		auth.POST("/library/create", middlewares.CheckRole("user"), controllers.CreateLibrary)
 		auth.POST("/book/create", middlewares.CheckRole("admin"), controllers.CreateBook)
 		auth.PATCH("/book/update", middlewares.CheckRole("admin"), controllers.UpdateBook)

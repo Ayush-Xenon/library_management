@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
@@ -13,9 +14,10 @@ func GetBooksByTitle(c *gin.Context) {
 	title := c.Query("title")
 	title = strings.ToUpper(title)
 	var books []models.Book
+	fmt.Println("dfcd", title)
 	query := initializers.DB.Model(&models.Book{})
 	if title != "" {
-		query = query.Where("title ILIKE ?", "%"+title+"%")
+		query = query.Where("title LIKE ?", "%"+title+"%")
 	}
 	query.Find(&books)
 

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	// "fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
@@ -37,7 +38,7 @@ func GetAllRequest(c *gin.Context) {
 				Where("reader_id=?", usl.UserID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No request found"})
 				return
 			}
 		} else {
@@ -46,7 +47,7 @@ func GetAllRequest(c *gin.Context) {
 				Where("reader_id=?", usl.UserID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No request found"})
 				return
 			}
 		}
@@ -57,7 +58,7 @@ func GetAllRequest(c *gin.Context) {
 				Where("lib_id=?", usl.LibraryID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No request found"})
 				return
 			}
 		} else {
@@ -65,7 +66,7 @@ func GetAllRequest(c *gin.Context) {
 				Where("lib_id=?", usl.LibraryID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No request found"})
 				return
 			}
 		}

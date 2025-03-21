@@ -36,7 +36,7 @@ func CreateLibrary(c *gin.Context) {
 	var libraryModel models.Library
 	initializers.DB.Where("name = ?", library.Name).Find(&libraryModel)
 	if libraryModel.ID != 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Library already exists"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Library Name Already Exists"})
 		return
 	}
 
@@ -56,10 +56,15 @@ func CreateLibrary(c *gin.Context) {
 
 	initializers.DB.Model(models.User{}).Where("id = ?", userData.ID).Update("Role", "owner")
 
-	var owner = models.UserLibraries{
-		UserID:    userData.ID,
-		LibraryID: temp.ID,
-	}
-	c.JSON(http.StatusOK, gin.H{"data": owner})
+	// var owner = models.UserLibraries{
+	// 	UserID:    userData.ID,
+	// 	LibraryID: temp.ID,
+	// }
+	initializers.DB.Model(&models.User{}).
+		Where("id=?", userData.ID).
+		Find(&userData)
+	c.Set("currentUser", userData)
+
+	c.JSON(http.StatusOK, gin.H{"data": "Library Created Successfully"})
 
 }

@@ -51,7 +51,7 @@ func ValidateISBN(isbn string) models.ValidateOutput {
 	return response
 }
 func ValidateName(name string) models.ValidateOutput {
-	response.Message = "Invalid Name Format (3-50 characters, starts and ends with a letter and contains only letters and spaces and Find word should be at least 3 characters)"
+	response.Message = "Invalid Name Format (3-50 characters, starts and ends with a letter and contains only letters and spaces and First word should be at least 3 characters)"
 	if len(name) < 3 || len(name) > 50 {
 		response.Result = false
 		return response

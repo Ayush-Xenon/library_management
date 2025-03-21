@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	// "fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
@@ -36,7 +37,7 @@ func GetIssueReg(c *gin.Context) {
 				Where("reader_id=?", usl.UserID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No Issue Record Found"})
 				return
 			}
 		} else {
@@ -44,7 +45,7 @@ func GetIssueReg(c *gin.Context) {
 				Where("reader_id=?", usl.UserID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No Issue Record Found"})
 				return
 			}
 		}
@@ -55,7 +56,7 @@ func GetIssueReg(c *gin.Context) {
 				Where("lib_id=?", usl.LibraryID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No Issue Record Found"})
 				return
 			}
 		} else {
@@ -63,10 +64,16 @@ func GetIssueReg(c *gin.Context) {
 				Where("lib_id=?", usl.LibraryID).
 				Find(&req)
 			if len(req) == 0 {
-				c.JSON(http.StatusOK, gin.H{"data": "No books found"})
+				c.JSON(http.StatusOK, gin.H{"data": "No Issue Record Found"})
 				return
 			}
 		}
 	}
+	// fmt.Println(req[0].CreatedAt.Date())
+	// for i := 0; i < len(req); i++ {
+	// 	req[i].CreatedAt = req[i].CreatedAt.Local()
+	// 	req[i].UpdatedAt = req[i].UpdatedAt.Local()
+	// 	req[i].ReturnDate = req[i].ReturnDate.Local()
+	// }
 	c.JSON(http.StatusOK, gin.H{"data": req})
 }

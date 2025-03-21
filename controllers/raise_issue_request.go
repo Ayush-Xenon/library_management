@@ -88,6 +88,17 @@ func RaiseRequest(c *gin.Context) {
 		return
 	}
 
+	// initializers.DB.Model(&models.RequestEvent{}).
+	// 	Where("book_id=?", req.BookID).
+	// 	Where("lib_id=?", req.LibID).
+	// 	Where("request_type=?", "required").
+	// 	Where("reader_id=?", userData.ID).
+	// 	Find(&chk)
+	// if chk.LibID != 0 {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Book is already requested"})
+	// 	return
+	// }
+
 	var reqIssue = models.RequestEvent{
 		BookID:      req.BookID,
 		ReaderID:    userData.ID,
@@ -95,6 +106,6 @@ func RaiseRequest(c *gin.Context) {
 		LibID:       req.LibID,
 	}
 	initializers.DB.Create(&reqIssue)
-	c.JSON(http.StatusAccepted, gin.H{"msg": "Request issue raised"})
+	c.JSON(http.StatusAccepted, gin.H{"data": "Request issue raised"})
 
 }

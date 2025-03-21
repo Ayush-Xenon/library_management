@@ -36,7 +36,8 @@ func Enroll(c *gin.Context) {
 	}
 
 	userData := user.(models.User)
-	fmt.Println(userData)
+	// fmt.Println(userData)
+	fmt.Println("Hi How are you")
 	var userLibrary models.UserLibraries
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).

@@ -75,6 +75,7 @@ func CheckAuth() gin.HandlerFunc {
 func CheckRole(s string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := c.MustGet("currentUser").(models.User)
+		// fmt.Println(user.Role)
 		if user.Role != s {
 			if user.Role == "user" {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , Find enroll or create"})
@@ -99,7 +100,7 @@ func CheckRole(s string) gin.HandlerFunc {
 func CheckRole2() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := c.MustGet("currentUser").(models.User)
-
+		// fmt.Println(user.Role)
 		// if user.Role == "user" {
 		// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , Find enroll or create"})
 		// }
@@ -109,7 +110,7 @@ func CheckRole2() gin.HandlerFunc {
 			return
 		}
 		if user.Role == "owner" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to perform this action , owner cannot be a reader or admin"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to perform this action , owner cannot be a reader or admin"})
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}

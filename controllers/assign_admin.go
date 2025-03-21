@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// 	//"fmt"
+	"fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
@@ -44,7 +45,7 @@ func AssignAdmin(c *gin.Context) {
 		return
 	}
 	userData := user.(models.User)
-
+	fmt.Println(userData)
 	var admins []struct {
 		LibID int
 	}
