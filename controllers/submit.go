@@ -91,6 +91,6 @@ func Submit(c *gin.Context) {
 	// 	Where("id=?", issueId.ID).
 	// 	Update("return_approver_id", userData.ID)
 
-	c.JSON(http.StatusOK, gin.H{"message": "Book returned successfully"})
+	c.JSON(http.StatusOK, gin.H{"data": "Book returned successfully"})
 
 }

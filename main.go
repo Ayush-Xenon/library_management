@@ -46,7 +46,7 @@ func main() {
 	r.POST("/login", controllers.Login)
 
 	r.GET("/books", controllers.GetBooks)
-	r.GET("/libraries", controllers.GetLib)
+
 	r.GET("/books/title", controllers.GetBooksByTitle)
 	r.GET("/books/author", controllers.GetBooksByAuthor)
 	r.GET("/books/publisher", controllers.GetBooksByPublisher)
@@ -54,8 +54,12 @@ func main() {
 	auth.Use(middlewares.CheckAuth())
 	{
 		auth.GET("/profile", controllers.GetProfile)
+		auth.GET("/libraries", controllers.GetLib)
 		auth.PATCH("/library/assign_admin", middlewares.CheckRole("owner"), controllers.AssignAdmin)
 		auth.GET("/user", middlewares.CheckRole("owner"), controllers.GetUsers)
+		auth.DELETE("/remove/user", controllers.RemoveUser)
+		auth.DELETE("/delete/user", controllers.DeleteUser)
+		auth.GET("/enrolleduser", controllers.GetEnrolledUsers)
 		auth.POST("/library/create", middlewares.CheckRole("user"), controllers.CreateLibrary)
 		auth.POST("/book/create", middlewares.CheckRole("admin"), controllers.CreateBook)
 		auth.PATCH("/book/update", middlewares.CheckRole("admin"), controllers.UpdateBook)

@@ -1,33 +1,19 @@
 package controllers
 
 import (
-	// "fmt"
-	"fmt"
 	"library_management/initializers"
 	"library_management/models"
 	"net/http"
 
-	// "strings"
-
 	"github.com/gin-gonic/gin"
 )
 
-func GetUsers(c *gin.Context) {
+func GetEnrolledUsers(c *gin.Context) {
+
 	id := c.Query("id")
 	// title = strings.ToUpper(title)
 	var usr []models.User
 	// fmt.Println("dfcd", id)
-	query := initializers.DB.Model(&models.User{})
-	if id != "" {
-		query = query.Where("id =?", id)
-	}
-	query.Where("role=?", "user").Find(&usr)
-
-	if len(usr) == 0 {
-		c.JSON(http.StatusOK, gin.H{"data": "No User found"})
-		return
-	}
-
 	user, exists := c.Get("currentUser")
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
@@ -42,22 +28,20 @@ func GetUsers(c *gin.Context) {
 	initializers.DB.Model(models.UserLibraries{}).
 		Where("user_id = ?", userData.ID).
 		Find(&libUsr)
-
-	var admn []models.User
-	// fmt.Println("dfcd", id)
-	initializers.DB.Model(&models.User{}).
+	query := initializers.DB.Model(&models.User{}).
 		Select("users.id", "users.name", "users.email", "users.role", "users.created_at", "users.updated_at", "users.contact_number").
 		Joins("join user_libraries on user_libraries.user_id = users.id").
 		Joins("join libraries on user_libraries.library_id = libraries.id").
-		Where("libraries.id = ?", libUsr.LibraryID).
-		Where("users.role=?", "admin").
-		Find(&admn)
+		Where("libraries.id = ?", libUsr.LibraryID)
+	if id != "" {
+		query = query.Where("users.id =?", id)
+	}
+	query.Where("role=?", "reader").Find(&usr)
 
-	// if len(usr) == 0 {
-	// 	c.JSON(http.StatusOK, gin.H{"data": "No ",})
-	// 	return
-	// }
-	fmt.Println("flsl;df", admn)
+	if len(usr) == 0 {
+		c.JSON(http.StatusOK, gin.H{"data": "No User found"})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"data": usr, "admin": admn})
+	c.JSON(http.StatusOK, gin.H{"data": usr})
 }

@@ -62,7 +62,7 @@ func Login(c *gin.Context) {
 
 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  userFound.ID,
-		"exp": time.Now().Add(time.Minute * 10).Unix(),
+		"exp": time.Now().Add(time.Minute * 120).Unix(),
 	})
 
 	token, err := generateToken.SignedString([]byte(os.Getenv("SECRET")))
@@ -72,10 +72,23 @@ func Login(c *gin.Context) {
 	}
 	//expirationTime := time.Now().Add(1 * time.Minute)
 	//c.SetCookie("token", token, int(expirationTime.Unix()), "/", "localhost", false, true)
+	if userFound.Role == "admin" {
+		var libID models.UserLibraries
+		initializers.DB.Model(models.UserLibraries{}).
+			Where("user_id=?", userFound.ID).
+			Find(&libID)
 
-	c.JSON(200, gin.H{
-		"token": token,
-		"role":  userFound.Role,
-	})
+		c.JSON(200, gin.H{
+			"token": token,
+			"role":  userFound.Role,
+			"libID": libID.LibraryID,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"token": token,
+			"role":  userFound.Role,
+		})
+
+	}
 
 }

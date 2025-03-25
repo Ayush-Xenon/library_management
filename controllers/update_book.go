@@ -72,7 +72,7 @@ func UpdateBook(c *gin.Context) {
 			Where("isbn=?", update_book.ISBN).
 			Where("lib_id=?", libUsr.LibraryID).
 			Delete(&models.Book{})
-		c.JSON(http.StatusOK, gin.H{"msg": "Book Removed"})
+		c.JSON(http.StatusOK, gin.H{"data": "Book Removed"})
 		return
 	}
 	initializers.DB.Model(models.Book{}).
